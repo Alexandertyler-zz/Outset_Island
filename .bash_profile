@@ -35,4 +35,7 @@ function prompt {
     local WHITEBOLD="\[\033[1;37m\]"
     export PS1="\n$BLACKBOLD[\t]$BLUEBOLD \u\[\033[00m\]:$CYAN\w\[\033[00m\] § "  
 }
-prompt  
+prompt 
+
+alias sudo='sudo '
+alias woodo='sh ~/.woodo.sh'
