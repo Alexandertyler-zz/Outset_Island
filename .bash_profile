@@ -37,5 +37,9 @@ function prompt {
 }
 prompt 
 
+export CLICOLOR=1
+export LSCOLORS=gxBxhxDxfxhxhxhxhxcxcx
+
 alias sudo='sudo '
 alias woodo='sh ~/.woodo.sh'
+alias ls='ls -GFh'
