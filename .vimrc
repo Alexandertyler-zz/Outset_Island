@@ -1,12 +1,7 @@
 " vimrc file for Alex Tyler
-" Set 7 lines to the cursor - when moving vertically using j/k
-set so=7
 
 " Turn on the WiLd menu
 set wildmenu
-
-" Ignore compiled files
-set wildignore=*.o,*~,*.pyc
 
 "Always show current position
 set ruler
@@ -88,7 +83,7 @@ set noswapfile
 " => Text, tab and indent related
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Use spaces instead of tabs
-set expandtab
+"set expandtab
 
 " Be smart when using tabs ;)
 set smarttab
@@ -114,3 +109,6 @@ map <C-l> <c-w>l
 map <C-h> <c-w>h
 map <C-k> <c-w>k
 map <C-j> <c-w>j
+
+set list
+set listchars=tab:∫- 
