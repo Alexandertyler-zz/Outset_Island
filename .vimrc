@@ -1,5 +1,7 @@
 " vimrc file for Alex Tyler
 
+set t_Co=256
+
 " Turn on the WiLd menu
 set wildmenu
 
@@ -53,7 +55,11 @@ set tm=500
 syntax enable
 
 set background=dark
-colorscheme desert
+let g:solarized_visibility="high"
+let g:solarized_contrast="high"
+let g:solarized_termcolors=256
+colorscheme solarized
+
 
 " Set extra options when running in GUI mode
 if has("gui_running")
