@@ -15,9 +15,6 @@ def parse_commands(chan, nick, msg):
     if msg == '.roll':
         roll(chan, nick)
 
-    if msg == '.webex':
-        webex(chan)
-
     if msg.startswith(".suggest"):
         try:
             suggestion = msg.split('.suggest ')[1]
@@ -31,13 +28,15 @@ def parse_commands(chan, nick, msg):
 
     if msg == '.kill':
         suicide(chan)
+
+    if msg == 
      
-    """
+    
     for word in bad_words:
         if word in msg:
             sendmsg(channel, "~~Language Please~~")
             break
-    """
+    
 
 def ping(response):
     ircsock.send("PONG "+ response+"\n")
@@ -66,11 +65,6 @@ def roll(chan, nick):
     ircsock.send("PRIVMSG " + chan + " :" + nick + " has rolled a " + str(rand_num) + '\n')
 
 
-def webex(chan):
-    ircsock.send("PRIVMSG " + chan + " :User: Appliance Team\n")
-    ircsock.send("PRIVMSG " + chan + " :Password: Darkwatchsm650\n")
-
-
 def suggest(chan, nick, suggestion):
     ircsock.send("PRIVMSG " + chan + " :Thanks " + nick + " for your suggestion. Alex will be notified\n")
     with open("irc_suggestions.txt", "a+") as sugg_file:
@@ -80,7 +74,6 @@ def suggest(chan, nick, suggestion):
 def print_help(chan):
    ircsock.send("PRIVMSG " + chan + " :How can I be of assistance? My current functions include:\n")
    ircsock.send("PRIVMSG " + chan + " :    .roll - roll a random number between 1 and 6\n")
-   ircsock.send("PRIVMSG " + chan + " :    .webex - get the webex credentials for the appliance team\n")
    ircsock.send("PRIVMSG " + chan + " :    .suggest - suggest a command you would like and I'll notify alex for you\n")
    ircsock.send("PRIVMSG " + chan + " :    .help - print this list of commands\n")
    ircsock.send("PRIVMSG " + chan + " :    .kill - emergency escape from the irc client, use sparingly please\n")

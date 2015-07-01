@@ -7,3 +7,14 @@ brainfuck interpreter
 more bots
 fortune
 misfortune
+uno
+Now Playing
+turning off suggest
+procedurally generated suggestions
+a suggestion bot
+reading the README
+reimplement language plz
+ignore jamesK
+mooom samantha's being mean to me
+timeout on suggest
+don't make me pull this channel over
