@@ -1,0 +1,9 @@
+add a .quit so the bot disappears for say, 30 seconds,, then comes back into channel with some witty entrance
+markov chain generator
+friends
+banishing jamesK
+joejoes
+brainfuck interpreter
+more bots
+fortune
+misfortune
