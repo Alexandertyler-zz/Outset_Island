@@ -3,11 +3,11 @@ import time
 import random
 import sys
 from multiprocess import Process, Pipe
-from multiprocess.communication import Listener 
+from multiprocess.connection import Listener 
 
 
-server = "chat.norse-data.com"
-channel = "#appliance"
+server = "127.0.0.1"
+channel = "#bot_test"
 botnick = "a-bot"
 
 ignore_list = []
@@ -63,7 +63,7 @@ def ping(response):
     ircsock.send("PONG "+ response+"\n")
 
 
-:def ignore(chan, user):
+def ignore(chan, user):
     if not user in ignore_list:
         ignore_list.append(user)
     ircsock.send("PRIVMSG " + chan + " :Due to high levels of spam in the vicinity, " + user + " will be ignored\n") 
