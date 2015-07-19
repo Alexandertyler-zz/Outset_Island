@@ -274,7 +274,7 @@ def irc_loop(ircsock, channel, listener):
         connection = connection.recv()
         if command:
             module = getattr(__import__('irc_commands'), irc_dict.get(command))
-            module.perform(ircsock, channel)
+            module.perform(ircsock, channel, None)
 
         ircmsg = ircsock.recv(2048)
         ircmsg = ircmsg.strip('\n\r')

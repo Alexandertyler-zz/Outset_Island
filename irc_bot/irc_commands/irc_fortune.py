@@ -1,7 +1,3 @@
-##  This is a python module for fortune telling. It is designed
-##  to be imported into an irc chat bot. Designed and coded by
-##  Alex Tyler, this code is free to use and modify as long as
-##  it is not for profit.
 import random
 
 
@@ -62,6 +58,6 @@ fortune_list = ["The fortune you seek is in another irc channel",
                 "It might be time to find a new favorite color",
                 "Don't listen to a fortune, make your own future"]
 
-def fortune(ircsock, chan, nick):
+def action(ircsock, chan, nick):
     nick_fortune = random.choice(fortune_list)
     ircsock.send("PRIVMSG " + chan + " :" + nick + ", " + nick_fortune + "\n")
