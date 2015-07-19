@@ -1,20 +1,25 @@
-add a .quit so the bot disappears for say, 30 seconds,, then comes back into channel with some witty entrance
 markov chain generator
-friends
-banishing jamesK
-joejoes
 brainfuck interpreter
-more bots
-fortune
 misfortune
 uno
 Now Playing
-turning off suggest
-procedurally generated suggestions
-a suggestion bot
-reading the README
-reimplement language plz
-ignore jamesK
-mooom samantha's being mean to me
-timeout on suggest
-don't make me pull this channel over
+google search, urban, weather
+more bad words
+case insensitive bad word regex jeez
+yo integration
+dongers
+tumblr hook to post a link whenever alfred blogs 
+dongers
+.dank command for maymays
+lemmy face cmd
+is it lunch time yet automation
+the ability to Nag JamesK to finish poudriere
+add more fortunes
+plz save a-bot
+more affable a-bot so more people are altruistically inclined towards its self
+a-bot telling me what their preferred pronoun is
+bot command that posts tweet contents from tweet url
+better random
+commas please
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a diam lectus. 
+some phreaking long distance
