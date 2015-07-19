@@ -47,7 +47,7 @@ def parse_commands(chan, nick, msg):
         irc_fortune.fortune(chan, nick)
 
     if msg.startswith(".8ball"):
-        irc_eightball.eightball(chan, nick)
+        irc_8ball.eightball(chan, nick)
     
     if msg.startswith(".ignore"):
         if nick == 'alex':
@@ -209,9 +209,9 @@ def verify(ircsock):
             waiting_to_verify = False
 
 
-def login_routine(intro=False):
+def login_routine(server='127.0.0.1', port=6667, intro=False):
     ircsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    ircsock.connect((server, 6667))
+    ircsock.connect((server, port))
     ircsock.send("USER "+ botnick +" "+ botnick +" "+ botnick +" :Developed by Cyberdyne Systems\n")
     ircsock.send("NICK " + botnick +"\n")
 
@@ -265,15 +265,20 @@ def shell_loop(ircsock, client, channel):
     while 1:
         command = raw_input('irc_bot: ')
         
-        if command == 'exit':
+        if command == 'kill':
             client.send(command)
             client.close()
             sys.exit()
 
 
 if __name__ == "__main__":
-    ircsock, channel = login_routine()
 
+    
+    server = raw_input('Enter server: ')
+    port = raw_input('Enter port: ')
+    ircsock, channel = login_routine(server, int(port))
+    
+    
     address = ('localhost', 2400)
     listener = Listener(address)
     client = Client(address)
