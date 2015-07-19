@@ -209,24 +209,19 @@ def verify(ircsock):
             waiting_to_verify = False
 
 
-def login_routine(server='127.0.0.1', port=6667, intro=False):
+def login_routine(server='127.0.0.1', port=6667, channel=None, intro=False):
     ircsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     ircsock.connect((server, port))
     ircsock.send("USER "+ botnick +" "+ botnick +" "+ botnick +" :Developed by Cyberdyne Systems\n")
     ircsock.send("NICK " + botnick +"\n")
 
     #verify(ircsock)
+    if channel:
+        joinchannel(ircsock, channel)
+        if intro:
+            introduction(ircsock, channel)
 
-
-    channel = '#' + str(sys.argv[1])
-
-    
-    joinchannel(ircsock, channel)
-    if intro:
-        introduction(ircsock, channel)
-
-    #launch us into the main eval loop
-    return ircsock, channel
+    return ircsock
 
 
 def reload_module(module):
@@ -263,8 +258,8 @@ def irc_loop(ircsock, listener, chan):
 def shell_loop(ircsock, client, channel):
 
     while 1:
-        command = raw_input('irc_bot: ')
-        
+        command = raw_input('irc_bot: ') 
+
         if command == 'kill':
             client.send(command)
             client.close()
@@ -276,10 +271,19 @@ if __name__ == "__main__":
     
     server = raw_input('Enter server: ')
     port = raw_input('Enter port: ')
-    ircsock, channel = login_routine(server, int(port))
+    channel = raw_input('Enter channel: ')
+
+    if server and port:
+        ircsock = login_routine(server, int(port))
+    elif server and not port:
+        ircsock = login_routine(server=server)
+    elif not server and port:
+        ircsock = login_routine(port=int(port))
+    else:
+        ircsock = login_routine()
     
     
-    address = ('localhost', 2400)
+    address = ('localhost', 2424)
     listener = Listener(address)
     client = Client(address)
 
