@@ -38,9 +38,6 @@ def parse_commands(chan, nick, msg):
     if msg == '.help':
         print_help(nick)
 
-    if msg == '.kill':
-        irc_kill.kill(chan)
-
     if msg == '.fortune':
         irc_fortune.fortune(chan, nick)
 
@@ -269,10 +266,9 @@ def irc_loop(ircsock, bot_nick, channel, client):
         #check for console commands
         if client.poll():
             shell_command = client.recv()
-            print shell_command
-            valid = irc_dict.get(shell_command)
-            if valid:
-                module = getattr(__import__('irc_commands'), valid)
+            valid_shell = irc_dict.get(shell_command)
+            if valid_shell:
+                module = getattr(__import__('irc_commands'), valid_shell)
                 module.action(ircsock, channel, None)
 
         try:
@@ -281,16 +277,20 @@ def irc_loop(ircsock, bot_nick, channel, client):
 
             if ircmsg.find("PING :") != -1:
                 response = ircmsg.split("PING ")[1]
-                print 'ping'
                 ping(response)
 
             if ircmsg.find(' PRIVMSG ') != 1:
-                print 'privmsg'
                 chan = ircmsg.split(' PRIVMSG ')[-1].split(' :')[0]
                 nick = ircmsg.split('!')[0][1:]
                 msg = ircmsg.split(' PRIVMSG ')[-1].split(' :')[1]
         
-                parse_commands(chan, nick, msg)
+                if msg.startswith('.'):
+                    irc_command = msg.split('.')[1]
+                    valid_irc = irc_dict.get(irc_command)
+                    if valid_irc:
+                        module = getattr(__import__('irc_commands'),  valid_irc)
+                        module.action(ircsock, channel, nick)
+
         except:
             continue
 
