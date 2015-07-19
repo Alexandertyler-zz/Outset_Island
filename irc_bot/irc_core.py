@@ -3,7 +3,7 @@ import time
 import random
 import sys
 from multiprocess import Process, Pipe
-from multiprocess.connection import Listener 
+from multiprocess.connection import Listener, Client 
 
 
 server = "127.0.0.1"
@@ -69,7 +69,7 @@ def ignore(chan, user):
     ircsock.send("PRIVMSG " + chan + " :Due to high levels of spam in the vicinity, " + user + " will be ignored\n") 
 
 
-def introduction(chan):
+def introduction(ircsock, chan):
     ircsock.send("PRIVMSG " + chan + " :Hello world! I am Alex's work in progress irc_bot.\n")
     print_help(chan) 
 
@@ -78,7 +78,7 @@ def sendmsg(chan, msg):
     ircsock.send("PRIVMSG " + chan + " :" + msg +"\n")
 
 
-def joinchannel(chan):
+def joinchannel(ircsock, chan):
     print "Joining channel", chan
     ircsock.send("JOIN  " + chan + "\n")
 
@@ -194,8 +194,9 @@ def suicide(chan):
     ircsock.send("PRIVMSG " + chan + " :Goodbye cruel world\n")
     sys.exit(1)
 
-def verify():
-    while 1:
+def verify(ircsock):
+    waiting_to_verify = True
+    while waiting_to_verify:
         ircmsg = ircsock.recv(2048)
         ircmsg.strip('\n\r')
         print(ircmsg)
@@ -203,13 +204,7 @@ def verify():
         if ircmsg.find("PING :") != -1:
             response = ircmsg.split("PING ")[1]
             ping(response)
-            return
-
-try:
-    channel = '#' + str(sys.argv[1])
-except:
-    print "No channel specified, defaulting to #appliance"
-
+            waiting_to_verify = False
 
 
 def login_routine(intro=False):
@@ -218,25 +213,32 @@ def login_routine(intro=False):
     ircsock.send("USER "+ botnick +" "+ botnick +" "+ botnick +" :Developed by Cyberdyne Systems\n")
     ircsock.send("NICK " + botnick +"\n")
 
-    verify()
-    joinchannel(channel)
+    #verify(ircsock)
+
+
+    channel = '#' + str(sys.argv[1])
+
+    
+    joinchannel(ircsock, channel)
     if intro:
-        introduction(channel)
+        introduction(ircsock, channel)
 
     #launch us into the main eval loop
-    return ircsock
+    return ircsock, channel
 
 
 def reload_module(module):
     reload(module)
 
-def irc_loop(ircsock, listener):
+def irc_loop(ircsock, listener, chan):
     connection = listener.accept()
     while 1:
 
         command = connection.recv()
         if command:
             print command
+
+            ircsock.send("PRIVMSG " + channel + " :Perhaps just a moment's rest...\n")
             sys.exit(1)
 
         ircmsg = ircsock.recv(2048)
@@ -256,24 +258,24 @@ def irc_loop(ircsock, listener):
         
             parse_commands(chan, nick, msg)
 
-def shell_loop(ircsock, client):
-    connection = client.accept()
+def shell_loop(ircsock, client, channel):
+
     while 1:
-        conn.send('hello')
-        conn.close()
+        client.send('hello')
+        client.close()
         sys.exit()
 
 
 if __name__ == "__main__":
-    ircsock = login_routine()
+    ircsock, channel = login_routine()
 
     address = ('localhost', 2400)
     listener = Listener(address)
     client = Client(address)
 
     #two processes, one for console one for the irc channel
-    shell = Process(target=shell_loop, args=(ircsock, listener))
-    irc = Process(target=irc_loop, args=(ircsock, client))
+    shell = Process(target=shell_loop, args=(ircsock, client, channel))
+    irc = Process(target=irc_loop, args=(ircsock, listener, channel))
 
     shell.start()
     irc.start()
