@@ -47,7 +47,7 @@ def parse_commands(chan, nick, msg):
         irc_fortune.fortune(chan, nick)
 
     if msg.startswith(".8ball"):
-        irc_8ball.eightball(chan, nick)
+        irc_eightball.eightball(chan, nick)
     
     if msg.startswith(".ignore"):
         if nick == 'alex':
