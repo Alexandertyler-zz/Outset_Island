@@ -58,6 +58,6 @@ fortune_list = ["The fortune you seek is in another irc channel",
                 "It might be time to find a new favorite color",
                 "Don't listen to a fortune, make your own future"]
 
-def action(ircsock, chan, nick):
+def action(ircsock, chan, nick, msg):
     nick_fortune = random.choice(fortune_list)
     ircsock.send("PRIVMSG " + chan + " :" + nick + ", " + nick_fortune + "\n")

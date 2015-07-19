@@ -269,7 +269,7 @@ def irc_loop(ircsock, bot_nick, channel, client):
             valid_shell = irc_dict.get(shell_command)
             if valid_shell:
                 module = getattr(__import__('irc_commands'), valid_shell)
-                module.action(ircsock, channel, None)
+                module.action(ircsock, channel, 'shell', '')
 
         try:
             ircmsg = ircsock.recv(2048)
@@ -285,11 +285,12 @@ def irc_loop(ircsock, bot_nick, channel, client):
                 msg = ircmsg.split(' PRIVMSG ')[-1].split(' :')[1]
         
                 if msg.startswith('.'):
-                    irc_command = msg.split('.')[1]
+                    irc_command = msg.split(' ')[0]
+                    irc_command = irc_command.split('.')[1]
                     valid_irc = irc_dict.get(irc_command)
                     if valid_irc:
                         module = getattr(__import__('irc_commands'),  valid_irc)
-                        module.action(ircsock, channel, nick)
+                        module.action(ircsock, channel, nick, msg)
 
         except:
             continue

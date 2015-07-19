@@ -22,6 +22,6 @@ eightball_list = ["It is certain",
                 "Very doubtful"]
 
 
-def eightball(ircsock, chan, nick):
+def action(ircsock, chan, nick, msg):
     eightball_reply = random.choice(eightball_list)
     ircsock.send("PRIVMSG " + chan + " :" + nick + ", " + eightball_reply + "\n")

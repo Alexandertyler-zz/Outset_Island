@@ -1,6 +1,6 @@
 import time
 
-def sleep(ircsock, chan, msg):
+def action(ircsock, chan, nick, msg):
     try:
         ircsock.send("PRIVMSG " + chan + " :Perhaps just a moment's rest...\n")
         time_ts = msg.split('.sleep ')[1]
