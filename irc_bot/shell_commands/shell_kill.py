@@ -1,6 +1,6 @@
 import sys
 
-def action(client):
-    client.send('kill')
-    client.close()
+def action(connection):
+    connection.send('kill')
+    connection.close()
     sys.exit(1)

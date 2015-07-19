@@ -260,17 +260,18 @@ def load_shell_commands():
 #the main irc connection loop
 #handles all irc communication
 #communicates with main process via listener
-def irc_loop(ircsock, channel, listener):
-    connection = listener.accept()
+def irc_loop(ircsock, channel, client):
     irc_dict = load_irc_commands()
     
     while 1:
         #check for console commands
-        shell_command = connection.recv()
+        shell_command = client.recv()
         valid = irc_dict.get(shell_command)
         if valid:
             module = getattr(__import__('irc_commands'), valid)
             module.action(ircsock, channel, None)
+
+        print 'test'
 
         ircmsg = ircsock.recv(2048)
         ircmsg = ircmsg.strip('\n\r')
@@ -292,7 +293,8 @@ def irc_loop(ircsock, channel, listener):
 
 #our main loop that the user interacts with
 #has its own set of commands for controlling the bot or the script
-def shell_loop(ircsock, channel, client):
+def shell_loop(ircsock, channel, listener):
+    connection = listener.accept()
 
     #using this method so I can reload it later if need be
     shell_dict = load_shell_commands()
@@ -303,7 +305,9 @@ def shell_loop(ircsock, channel, client):
         valid = shell_dict.get(command)
         if valid:
             module = getattr(__import__('shell_commands'), valid)
-            module.action(client)
+            module.action(connection)
+
+        client.send('test')
         
 
 
