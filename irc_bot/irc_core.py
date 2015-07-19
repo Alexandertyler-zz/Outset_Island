@@ -3,7 +3,9 @@ import time
 import random
 import sys
 from multiprocess import Process, Pipe
-from multiprocess.connection import Listener, Client 
+from multiprocess.connection import Listener, Client
+
+import irc_kill
 
 
 server = "127.0.0.1"
@@ -232,13 +234,13 @@ def reload_module(module):
 
 def irc_loop(ircsock, listener, chan):
     connection = listener.accept()
+    
     while 1:
-
         command = connection.recv()
         if command:
-            print command
-
-            ircsock.send("PRIVMSG " + channel + " :Perhaps just a moment's rest...\n")
+            if command == 'exit':
+                irc_kill.kill(ircsock, channel)
+                
             sys.exit(1)
 
         ircmsg = ircsock.recv(2048)
@@ -261,9 +263,12 @@ def irc_loop(ircsock, listener, chan):
 def shell_loop(ircsock, client, channel):
 
     while 1:
-        client.send('hello')
-        client.close()
-        sys.exit()
+        command = raw_input('irc_bot: ')
+        
+        if command == 'exit':
+            client.send(command)
+            client.close()
+            sys.exit()
 
 
 if __name__ == "__main__":
@@ -274,8 +279,7 @@ if __name__ == "__main__":
     client = Client(address)
 
     #two processes, one for console one for the irc channel
-    shell = Process(target=shell_loop, args=(ircsock, client, channel))
     irc = Process(target=irc_loop, args=(ircsock, listener, channel))
-
-    shell.start()
     irc.start()
+
+    shell_loop(ircsock, client, channel)
