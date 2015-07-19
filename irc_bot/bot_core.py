@@ -217,13 +217,15 @@ def login_routine(server, port, bot_nick, channel):
     ircsock.send("USER "+ bot_nick +" "+ bot_nick +" "+ bot_nick +" :Developed by Cyberdyne Systems\n")
     ircsock.send("NICK " + bot_nick +"\n")
 
+    ircsock.setblocking(0)
+
     #need to figure out case for verify
     #verify(ircsock)
 
     if channel:
         joinchannel(ircsock, channel)
 
-    return ircsock
+    return ircsock, server, port, bot_nick, channel
 
 
 def load_irc_commands():
@@ -260,35 +262,37 @@ def load_shell_commands():
 #the main irc connection loop
 #handles all irc communication
 #communicates with main process via listener
-def irc_loop(ircsock, channel, client):
+def irc_loop(ircsock, bot_nick, channel, client):
     irc_dict = load_irc_commands()
     
     while 1:
         #check for console commands
-        shell_command = client.recv()
-        valid = irc_dict.get(shell_command)
-        if valid:
-            module = getattr(__import__('irc_commands'), valid)
-            module.action(ircsock, channel, None)
+        if client.poll():
+            shell_command = client.recv()
+            print shell_command
+            valid = irc_dict.get(shell_command)
+            if valid:
+                module = getattr(__import__('irc_commands'), valid)
+                module.action(ircsock, channel, None)
 
-        print 'test'
+        try:
+            ircmsg = ircsock.recv(2048)
+            ircmsg = ircmsg.strip('\n\r')
 
-        ircmsg = ircsock.recv(2048)
-        ircmsg = ircmsg.strip('\n\r')
+            if ircmsg.find("PING :") != -1:
+                response = ircmsg.split("PING ")[1]
+                print 'ping'
+                ping(response)
 
-        if ircmsg.find(":Hello "+ botnick) != -1:
-            hello()
-
-        if ircmsg.find("PING :") != -1:
-            response = ircmsg.split("PING ")[1]
-            ping(response)
-
-        if ircmsg.find(' PRIVMSG ') != 1:
-            chan = ircmsg.split(' PRIVMSG ')[-1].split(' :')[0]
-            nick = ircmsg.split('!')[0][1:]
-            msg = ircmsg.split(' PRIVMSG ')[-1].split(' :')[1]
+            if ircmsg.find(' PRIVMSG ') != 1:
+                print 'privmsg'
+                chan = ircmsg.split(' PRIVMSG ')[-1].split(' :')[0]
+                nick = ircmsg.split('!')[0][1:]
+                msg = ircmsg.split(' PRIVMSG ')[-1].split(' :')[1]
         
-            parse_commands(chan, nick, msg)
+                parse_commands(chan, nick, msg)
+        except:
+            continue
 
 
 #our main loop that the user interacts with
@@ -307,7 +311,7 @@ def shell_loop(ircsock, channel, listener):
             module = getattr(__import__('shell_commands'), valid)
             module.action(connection)
 
-        client.send('test')
+        #connection.send('test')
         
 
 
@@ -318,7 +322,7 @@ if __name__ == "__main__":
     bot_nick = raw_input('Enter bot nick: ')
     channel = raw_input('Enter channel: ')
 
-    ircsock = login_routine(server, port, bot_nick, channel)
+    ircsock, server, port, bot_nick, channel = login_routine(server, port, bot_nick, channel)
    
     #information for inter-process communication
     address = ('localhost', 2424)
@@ -326,8 +330,8 @@ if __name__ == "__main__":
     client = Client(address)
 
     #two processes, one for console one for the irc channel
-    irc = Process(target=irc_loop, args=(ircsock, channel, listener))
+    irc = Process(target=irc_loop, args=(ircsock, bot_nick, channel, client))
     irc.start()
 
     #launch into the shell loop for interactive commands
-    shell_loop(ircsock, channel, client)
+    shell_loop(ircsock, channel, listener)
