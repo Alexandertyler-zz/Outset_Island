@@ -3,6 +3,7 @@ import time
 import random
 import sys
 from multiprocess import Process, Pipe
+from multiprocess.communication import Listener 
 
 
 server = "chat.norse-data.com"
@@ -211,7 +212,7 @@ except:
 
 
 
-def login_routine(intro):
+def login_routine(intro=False):
     ircsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     ircsock.connect((server, 6667))
     ircsock.send("USER "+ botnick +" "+ botnick +" "+ botnick +" :Developed by Cyberdyne Systems\n")
@@ -223,14 +224,21 @@ def login_routine(intro):
         introduction(channel)
 
     #launch us into the main eval loop
-    irc_loop(ircsock)
+    return ircsock
 
 
 def reload_module(module):
     reload(module)
 
-def irc_loop(ircsock):
+def irc_loop(ircsock, listener):
+    connection = listener.accept()
     while 1:
+
+        command = connection.recv()
+        if command:
+            print command
+            sys.exit(1)
+
         ircmsg = ircsock.recv(2048)
         ircmsg = ircmsg.strip('\n\r')
 
@@ -248,14 +256,24 @@ def irc_loop(ircsock):
         
             parse_commands(chan, nick, msg)
 
-def shell_loop():
+def shell_loop(ircsock, client):
+    connection = client.accept()
     while 1:
-        return
+        conn.send('hello')
+        conn.close()
+        sys.exit()
+
 
 if __name__ == "__main__":
+    ircsock = login_routine()
+
+    address = ('localhost', 2400)
+    listener = Listener(address)
+    client = Client(address)
+
     #two processes, one for console one for the irc channel
-    shell = Process(target=shell_loop)
-    irc = Process(target=irc_loop)
+    shell = Process(target=shell_loop, args=(ircsock, listener))
+    irc = Process(target=irc_loop, args=(ircsock, client))
 
     shell.start()
     irc.start()
