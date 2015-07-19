@@ -206,27 +206,22 @@ def login_routine(server, port, bot_nick, channel):
     #handle defaults for server, port, and nickname
     #default channel is to not join one
     if not server:
-        print 'Using default server'
         server='127.0.0.1'
     if not port:
-        print 'Using default port'
         port=6667
     if not bot_nick:
-        print 'Using default bot nickname'
         bot_nick='a-bot'
 
     ircsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     ircsock.connect((server, port))
-    ircsock.send("USER "+ botnick +" "+ botnick +" "+ botnick +" :Developed by Cyberdyne Systems\n")
-    ircsock.send("NICK " + botnick +"\n")
+    ircsock.send("USER "+ bot_nick +" "+ bot_nick +" "+ bot_nick +" :Developed by Cyberdyne Systems\n")
+    ircsock.send("NICK " + bot_nick +"\n")
 
     #need to figure out case for verify
     #verify(ircsock)
 
     if channel:
         joinchannel(ircsock, channel)
-        if intro:
-            introduction(ircsock, channel)
 
     return ircsock
 
@@ -271,10 +266,11 @@ def irc_loop(ircsock, channel, listener):
     
     while 1:
         #check for console commands
-        connection = connection.recv()
-        if command:
-            module = getattr(__import__('irc_commands'), irc_dict.get(command))
-            module.perform(ircsock, channel, None)
+        shell_command = connection.recv()
+        valid = irc_dict.get(shell_command)
+        if valid:
+            module = getattr(__import__('irc_commands'), valid)
+            module.action(ircsock, channel, None)
 
         ircmsg = ircsock.recv(2048)
         ircmsg = ircmsg.strip('\n\r')
@@ -304,8 +300,10 @@ def shell_loop(ircsock, channel, client):
     while 1:
         command = raw_input('irc_bot: ') 
 
-        module = getattr(__import__('shell_commands'), shell_dict.get(command))
-        module.perform(client)
+        valid = shell_dict.get(command)
+        if valid:
+            module = getattr(__import__('shell_commands'), valid)
+            module.action(client)
         
 
 
@@ -313,8 +311,10 @@ if __name__ == "__main__":
 
     server = raw_input('Enter server: ')
     port = raw_input('Enter port: ')
-    bot_name = raw_input('Enter bot name: ')
+    bot_nick = raw_input('Enter bot nick: ')
     channel = raw_input('Enter channel: ')
+
+    ircsock = login_routine(server, port, bot_nick, channel)
    
     #information for inter-process communication
     address = ('localhost', 2424)
