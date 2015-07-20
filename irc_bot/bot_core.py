@@ -21,36 +21,13 @@ def parse_commands(chan, nick, msg):
     if nick in ignore_list:
         return
 
-    if msg.startswith('.roll'):
-        roll(chan, nick, msg)
-
-    if msg == '.notepad':
-        notepad(chan)
-
-    if msg.startswith(".suggest"):
-        try:
-            suggestion = msg.split('.suggest ')[1]
-            suggest(chan, nick, suggestion)
-        except:
-           sendmsg(chan, "Sorry, please add a space between your command and the suggestion") 
-
-
     if msg == '.help':
         print_help(nick)
-
-    if msg == '.fortune':
-        irc_fortune.fortune(chan, nick)
-
-    if msg.startswith(".8ball"):
-        irc_8ball.eightball(chan, nick)
     
     if msg.startswith(".ignore"):
         if nick == 'alex':
             user = msg.split('.ignore ')[1]
             ignore(chan, user)
-   
-    if msg.startswith(".sleep"):
-        sleep(chan, msg)
 
     if msg.startswith(".poll"):
         poll(chan, nick, msg)
@@ -78,41 +55,6 @@ def joinchannel(ircsock, chan):
 def hello(newnick):
     ircsock.send("PRIVMSG " + channel + " :Hello!\n")
 
-
-def roll(chan, nick, msg):
-    if 'd6' in msg:
-        rand_num = random.randint(1, 6)
-    elif 'd20' in msg:
-        rand_num = random.randint(1, 20)
-    elif 'coin' in msg:
-        rand_num = random.randint(1, 2)
-        if rand_num == 1:
-            rand_num = 'heads'
-        else:
-            rand_num = 'tails'
-    elif 'joint' in msg:
-        rand_num = 'fatty, be sure to share'
-    elif 'sushi' in msg:
-        rand_num = 'california roll, extra wasabi please'
-    else:
-        rand_num = random.randint(1, 100)
-        
-    ircsock.send("PRIVMSG " + chan + " :" + nick + " has rolled a " + str(rand_num) + '\n')
-
-
-def suggest(chan, nick, suggestion):
-    ircsock.send("PRIVMSG " + chan + " :Thanks " + nick + " for your suggestion. Alex will be notified\n")
-    with open("irc_suggestions.txt", "a+") as sugg_file:
-        sugg_file.write(suggestion + '\n')
-
-def sleep(chan, msg):
-    try:
-        ircsock.send("PRIVMSG " + chan + " :Perhaps just a moment's rest...\n")
-        time_ts = msg.split('.sleep ')[1]
-        time.sleep(int(time_ts))
-        ircsock.send("PRIVMSG " + chan + " :Is the coffee ready yet?\n")
-    except:
-        ircsock.send("PRIVMSG " + chan + " :I can't sleep, too much caffeine\n")
 
 def poll(base_chan, nick, msg):
     poll_values = msg.split(".poll ")
@@ -182,10 +124,6 @@ def print_help(nick):
    ircsock.send("PRIVMSG " + nick + " :    .sleep - specify an amount of seconds you would like me to sleep for\n")
    ircsock.send("PRIVMSG " + nick + " :I'm still a work in progress so my commands will be updated all the time. Check back later for more options!\n")
 
-def suicide(chan):
-    ircsock.send("PRIVMSG " + chan + " :Goodbye cruel world\n")
-    sys.exit(1)
-
 def verify(ircsock):
     waiting_to_verify = True
     while waiting_to_verify:
@@ -225,15 +163,22 @@ def login_routine(server, port, bot_nick, channel):
     return ircsock, server, port, bot_nick, channel
 
 
-def load_irc_commands():
-    irc_dict = {}
+def load_irc_commands(irc_dict, reload_commands=False):
     modules = [f for f in listdir('irc_commands') if f.startswith('irc')]
     for f_name in modules:
         module = f_name.split('.py')[0]
         command = module.split('irc_')[1]
 
-        #import the module for the first time
-        importlib.import_module('irc_commands.' + module)
+        if reload_commands:
+            if irc_dict.get(command):
+                mod = getattr(__import__('irc_commands'), module)
+                reload(mod)
+            else:
+                importlib.import_module('irc_commands.' + module)
+
+        else:
+            #import the module for the first time
+            importlib.import_module('irc_commands.' + module)
         
         #store the module into our shell commands dictionary
         irc_dict[command]=module
@@ -241,15 +186,22 @@ def load_irc_commands():
     return irc_dict
 
 
-def load_shell_commands():
-    shell_dict = {}
+def load_shell_commands(shell_dict, reload_commands=False):
     modules = [f for f in listdir('shell_commands') if f.startswith('shell')]
     for f_name in modules:
         module = f_name.split('.py')[0]
         command = module.split('shell_')[1]
 
-        #import the module for the first time
-        importlib.import_module('shell_commands.' + module)
+        if reload_commands:
+            if shell_dict.get(command):
+                mod = getattr(__import__('shell_commands'), module)
+                reload(mod)
+            else:
+                importlib.import_module('shell_commands.' + module)
+
+        else:
+            #import the module for the first time
+            importlib.import_module('shell_commands.' + module)
         
         #store the module into our shell commands dictionary
         shell_dict[command]=module
@@ -260,12 +212,17 @@ def load_shell_commands():
 #handles all irc communication
 #communicates with main process via listener
 def irc_loop(ircsock, bot_nick, channel, client):
-    irc_dict = load_irc_commands()
+    irc_dict = load_irc_commands({})
     
     while 1:
         #check for console commands
         if client.poll():
             shell_command = client.recv()
+            
+            if shell_command == 'reload':
+                irc_dict = load_irc_commands(irc_dict, reload_commands=True)
+                continue 
+            
             valid_shell = irc_dict.get(shell_command)
             if valid_shell:
                 module = getattr(__import__('irc_commands'), valid_shell)
@@ -302,11 +259,16 @@ def shell_loop(ircsock, channel, listener):
     connection = listener.accept()
 
     #using this method so I can reload it later if need be
-    shell_dict = load_shell_commands()
+    shell_dict = load_shell_commands({})
 
     while 1:
         command = raw_input('irc_bot: ') 
 
+        if command == 'reload':
+            connection.send('reload')
+            shell_dict = load_shell_commands(shell_dict, reload_commands=True)
+            continue
+        
         valid = shell_dict.get(command)
         if valid:
             module = getattr(__import__('shell_commands'), valid)
