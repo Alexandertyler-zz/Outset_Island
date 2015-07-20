@@ -1,0 +1,12 @@
+def action(ircsock, chan, nick, msg):
+   ircsock.send("PRIVMSG " + nick + " :How can I be of assistance? My current functions include:\n")
+   ircsock.send("PRIVMSG " + nick + " :    .poll - start a poll that will run for a minute. Vote with .vote\n")
+   ircsock.send("PRIVMSG " + nick + " :    .roll - roll a random number 1-100, d6, d20, or coin\n")
+   ircsock.send("PRIVMSG " + nick + " :    .webex - get the webex credentials for the appliance team\n")
+   ircsock.send("PRIVMSG " + nick + " :    .suggest - suggest a command you would like and I'll notify alex for you\n")
+   ircsock.send("PRIVMSG " + nick + " :    .help - print this list of commands\n")
+   ircsock.send("PRIVMSG " + nick + " :    .kill - emergency escape from the irc client, use sparingly please\n")
+   ircsock.send("PRIVMSG " + nick + " :    .fortune - get your fortune for the day\n")
+   ircsock.send("PRIVMSG " + nick + " :    .8ball - ask and you shall recieve an answer from the magic 8ball\n")
+   ircsock.send("PRIVMSG " + nick + " :    .sleep - specify an amount of seconds you would like me to sleep for\n")
+   ircsock.send("PRIVMSG " + nick + " :I'm still a work in progress so my commands will be updated all the time. Check back later for more options!\n")

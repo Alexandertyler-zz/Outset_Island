@@ -43,18 +43,8 @@ def ignore(chan, user):
     ircsock.send("PRIVMSG " + chan + " :Due to high levels of spam in the vicinity, " + user + " will be ignored\n") 
 
 
-def sendmsg(chan, msg):
-    ircsock.send("PRIVMSG " + chan + " :" + msg +"\n")
-
-
 def joinchannel(ircsock, chan):
-    print "Joining channel", chan
     ircsock.send("JOIN  " + chan + "\n")
-
-
-def hello(newnick):
-    ircsock.send("PRIVMSG " + channel + " :Hello!\n")
-
 
 def poll(base_chan, nick, msg):
     poll_values = msg.split(".poll ")
@@ -110,20 +100,6 @@ def parse_votes(chan, nick, msg, poll_results, voters):
     return poll_results, voters
 
     
-
-def print_help(nick):
-   ircsock.send("PRIVMSG " + nick + " :How can I be of assistance? My current functions include:\n")
-   ircsock.send("PRIVMSG " + nick + " :    .poll - start a poll that will run for a minute. Vote with .vote\n")
-   ircsock.send("PRIVMSG " + nick + " :    .roll - roll a random number 1-100, d6, d20, or coin\n")
-   ircsock.send("PRIVMSG " + nick + " :    .webex - get the webex credentials for the appliance team\n")
-   ircsock.send("PRIVMSG " + nick + " :    .suggest - suggest a command you would like and I'll notify alex for you\n")
-   ircsock.send("PRIVMSG " + nick + " :    .help - print this list of commands\n")
-   ircsock.send("PRIVMSG " + nick + " :    .kill - emergency escape from the irc client, use sparingly please\n")
-   ircsock.send("PRIVMSG " + nick + " :    .fortune - get your fortune for the day\n")
-   ircsock.send("PRIVMSG " + nick + " :    .8ball - ask and you shall recieve an answer from the magic 8ball\n")
-   ircsock.send("PRIVMSG " + nick + " :    .sleep - specify an amount of seconds you would like me to sleep for\n")
-   ircsock.send("PRIVMSG " + nick + " :I'm still a work in progress so my commands will be updated all the time. Check back later for more options!\n")
-
 def verify(ircsock):
     waiting_to_verify = True
     while waiting_to_verify:
@@ -151,7 +127,6 @@ def login_routine(server, port, bot_nick, channel):
     ircsock.connect((server, port))
     ircsock.send("USER "+ bot_nick +" "+ bot_nick +" "+ bot_nick +" :Developed by Cyberdyne Systems\n")
     ircsock.send("NICK " + bot_nick +"\n")
-
     ircsock.setblocking(0)
 
     #need to figure out case for verify
@@ -175,11 +150,9 @@ def load_irc_commands(irc_dict, reload_commands=False):
                 reload(mod)
             else:
                 importlib.import_module('irc_commands.' + module)
-
         else:
             #import the module for the first time
-            importlib.import_module('irc_commands.' + module)
-        
+            importlib.import_module('irc_commands.' + module)  
         #store the module into our shell commands dictionary
         irc_dict[command]=module
 
@@ -198,11 +171,9 @@ def load_shell_commands(shell_dict, reload_commands=False):
                 reload(mod)
             else:
                 importlib.import_module('shell_commands.' + module)
-
         else:
             #import the module for the first time
-            importlib.import_module('shell_commands.' + module)
-        
+            importlib.import_module('shell_commands.' + module)  
         #store the module into our shell commands dictionary
         shell_dict[command]=module
 
