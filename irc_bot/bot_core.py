@@ -33,10 +33,6 @@ def parse_commands(chan, nick, msg):
         poll(chan, nick, msg)
 
 
-def ping(response):
-    ircsock.send("PONG "+ response+"\n")
-
-
 def ignore(chan, user):
     if not user in ignore_list:
         ignore_list.append(user)
@@ -105,11 +101,10 @@ def verify(ircsock):
     while waiting_to_verify:
         ircmsg = ircsock.recv(2048)
         ircmsg.strip('\n\r')
-        print(ircmsg)
 
         if ircmsg.find("PING :") != -1:
             response = ircmsg.split("PING ")[1]
-            ping(response)
+            ircsock.send("PONG "+ response+"\n")
             waiting_to_verify = False
 
 
@@ -124,17 +119,19 @@ def login_routine(server, port, bot_nick, channel):
         bot_nick='a-bot'
 
     ircsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    ircsock.connect((server, port))
+    ircsock.connect((server, int(port)))
     ircsock.send("USER "+ bot_nick +" "+ bot_nick +" "+ bot_nick +" :Developed by Cyberdyne Systems\n")
     ircsock.send("NICK " + bot_nick +"\n")
-    ircsock.setblocking(0)
 
     #need to figure out case for verify
-    #verify(ircsock)
+    verify(ircsock)
 
     if channel:
         joinchannel(ircsock, channel)
-
+    
+    #have to do this after verification
+    ircsock.setblocking(0)
+    
     return ircsock, server, port, bot_nick, channel
 
 
