@@ -116,7 +116,7 @@ def login_routine(server, port, bot_nick, channel):
     if not port:
         port=6667
     if not bot_nick:
-        bot_nick='a-bot'
+        bot_nick='keats'
 
     ircsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     ircsock.connect((server, int(port)))
@@ -202,7 +202,8 @@ def irc_loop(ircsock, bot_nick, channel, client):
 
             if ircmsg.find("PING :") != -1:
                 response = ircmsg.split("PING ")[1]
-                ping(response)
+                ircsock.send("PONG "+ response+"\n")
+
 
             if ircmsg.find(' PRIVMSG ') != 1:
                 chan = ircmsg.split(' PRIVMSG ')[-1].split(' :')[0]
