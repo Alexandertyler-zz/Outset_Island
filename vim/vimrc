@@ -1,5 +1,7 @@
 " vimrc file for Alex Tyler
 
+execute pathogen#infect()
+
 set t_Co=256
 
 " Turn on the WiLd menu
@@ -54,11 +56,18 @@ set tm=500
 " Enable syntax highlighting
 syntax enable
 
+colorscheme gruvbox
 set background=dark
-let g:solarized_visibility="high"
-let g:solarized_contrast="high"
-let g:solarized_termcolors=256
-colorscheme solarized
+
+"gruvbox
+let g:gruvbox_contrast_dark="hard"
+let g:gruvbox_contrast_light="medium"
+
+"solarized
+"let g:solarized_visibility="high"
+"let g:solarized_contrast="high"
+"let g:solarized_termcolors=256
+
 
 
 " Set extra options when running in GUI mode
@@ -85,25 +94,33 @@ set nowb
 set noswapfile
 
 
+augroup cprog
+  autocmd!
+  autocmd BufNewFile,BufRead *.c,*.cpp,*.h	set formatoptions=croql
+  autocmd BufNewFile,BufRead *.c,*.cpp,*.h	set cindent
+  autocmd BufNewFile,BufRead *.c,*.cpp,*.h	set comments=sr:/*,mb:*,ex:*/
+  autocmd BufNewFile,BufRead *.c,*.cpp,*.h	set cino=':0,>2s,n0,e0,p2s,(1s,t0,=2s'
+augroup END
+
+
+augroup pythonprog
+    autocmd!
+    autocmd BufNewFile,BufRead *.py setlocal expandtab
+    autocmd BufNewFile,BufRead *.py set tabstop=4
+    autocmd BufNewFile,BufRead *.py set shiftwidth=4
+augroup END
+
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Text, tab and indent related
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Use spaces instead of tabs
-set expandtab
-
-" Be smart when using tabs ;)
-set smarttab
-
-" 1 tab == 4 spaces
-set shiftwidth=4
-set tabstop=4
 
 " Linebreak on 500 characters
 set lbr
 set tw=500
 
 set ai "Auto indent
-set si "Smart indent
+"set si "Smart indent
 set wrap "Wrap lines
 
 set mouse=a
@@ -116,5 +133,5 @@ map <C-h> <c-w>h
 map <C-k> <c-w>k
 map <C-j> <c-w>j
 
-set list
+" set list
 set listchars=tab:∫- 
