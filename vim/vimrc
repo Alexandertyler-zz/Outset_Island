@@ -1,49 +1,77 @@
-" vimrc file for Alex Tyler
+"Vimrc file for Alex Tyler
 
-execute pathogen#infect()
+"In case it's a systemwide vimrc
+set nocompatible
+filetype off
 
-set t_Co=256
+"Launch vundle
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
 
-" Turn on the WiLd menu
-set wildmenu
+"Let Vundle manage itself
+Plugin 'VundleVim/Vundle.vim'
+
+"Tools
+Plugin 'Valloric/YouCompleteMe'
+Plugin 'bkad/CamelCaseMotion'
+
+"Customizations
+Plugin 'bling/vim-airline'
+Plugin 'mhinz/vim-signify'
+
+"Colorschemes
+Plugin 'morhetz/gruvbox'
+Plugin 'altercation/vim-colors-solarized'
+
+call vundle#end()
+filetype plugin indent on
+
+"Set utf8 as standard encoding and en_US as the standard language
+set encoding=utf-8
+set fileencoding=utf-8
+
+"Set folding for code
+set foldenable
+set foldmethod=indent
+set foldlevelstart=99
 
 "Always show current position
 set ruler
+set timeoutlen=500
 
-" Height of the command bar
+"Height of the command bar
 set cmdheight=2
 
-" A buffer becomes hidden when it is abandoned
+"A buffer becomes hidden when it is abandoned
 set hid
 
-" Configure backspace so it acts as it should act
+"Configure backspace so it acts as it should act
 set backspace=eol,start,indent
 set whichwrap+=<,>,h,l
 
-" Ignore case when searching
+"Searching
+"Ignore case when searching
 set ignorecase
-
-" When searching try to be smart about cases 
+"When searching try to be smart about cases 
 set smartcase
-
-" Highlight search results
+"Highlight search results
 set hlsearch
-
-" Makes search act like search in modern browsers
+"Makes search act like search in modern browsers
 set incsearch
 
-" Don't redraw while executing macros (good performance config)
+"Don't redraw while executing macros (good performance config)
 set lazyredraw
 
-" For regular expressions turn magic on
+"For regular expressions turn magic on
 set magic
 
-" Show matching brackets when text indicator is over them
+"Show matching brackets when text indicator is over them
 set showmatch
 " How many tenths of a second to blink when matching brackets
 set mat=2
 
-" No annoying sound on errors
+"Sounds
+"No annoying sound on errors
 set noerrorbells
 set novisualbell
 set t_vb=
@@ -53,36 +81,23 @@ set tm=500
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Colors and Fonts
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Enable syntax highlighting
+"Terminal color
+set t_Co=256
+
+"Enable syntax highlighting
 syntax enable
 
-colorscheme gruvbox
 set background=dark
+colorscheme gruvbox
 
 "gruvbox
-let g:gruvbox_contrast_dark="hard"
-let g:gruvbox_contrast_light="medium"
+" let g:gruvbox_contrast_dark="medium"
+" let g:gruvbox_contrast_light="medium"
 
 "solarized
 "let g:solarized_visibility="high"
 "let g:solarized_contrast="high"
 "let g:solarized_termcolors=256
-
-
-
-" Set extra options when running in GUI mode
-if has("gui_running")
-    set guioptions-=T
-    set guioptions+=e
-    set t_Co=256
-    set guitablabel=%M\ %t
-endif
-
-" Set utf8 as standard encoding and en_US as the standard language
-set encoding=utf8
-
-" Use Unix as the standard file type
-set ffs=unix,dos,mac
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -92,7 +107,6 @@ set ffs=unix,dos,mac
 set nobackup
 set nowb
 set noswapfile
-
 
 augroup cprog
   autocmd!
@@ -114,24 +128,44 @@ augroup END
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Text, tab and indent related
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"Set linenumbers
+set nu
 
-" Linebreak on 500 characters
+"Yank lines to OS X clipboard
+set clipboard=unnamed
+noremap y "+y
+noremap yy "+yy
+noremap p "+p
+
+"Preserve indentation when pasting from OS X
+noremap <leader>p :set paste<CR>:put *<CR>:set nopaste<CR>
+
+"Return key clears search highlighting
+nmap <CR> :nohlsearch<CR>
+autocmd BufReadPost quickfix nmap <buffer> <CR> <CR>
+
+"Linebreak on 500 characters
 set lbr
 set tw=500
 
-set ai "Auto indent
-"set si "Smart indent
-set wrap "Wrap lines
+"Auto indent
+set ai
+"Smart indent
+set si
+"Wrap lines
+set wrap
 
 set mouse=a
 set ttymouse=xterm2
 
-set nu
+"Aliases
+:command WQ wq
+:command Wq wq
+:command W w
+:command Q q
 
-map <C-l> <c-w>l
-map <C-h> <c-w>h
-map <C-k> <c-w>k
-map <C-j> <c-w>j
 
-" set list
-set listchars=tab:∫- 
+"set list
+set listchars=tab:∫-
+
+"
