@@ -111,8 +111,8 @@ set noswapfile
 augroup cprog
   autocmd!
   autocmd BufNewFile,BufRead *.c,*.cpp,*.h	set formatoptions=croql
-  autocmd BufNewFile,BufRead *.c,*.cpp,*.h	set cindent
   autocmd BufNewFile,BufRead *.c,*.cpp,*.h	set comments=sr:/*,mb:*,ex:*/
+  autocmd BufNewFile,BufRead *.c,*.cpp,*.h	set softtabstop=8
   autocmd BufNewFile,BufRead *.c,*.cpp,*.h	set cino=':0,>2s,n0,e0,p2s,(1s,t0,=2s'
 augroup END
 
@@ -122,6 +122,8 @@ augroup pythonprog
     autocmd BufNewFile,BufRead *.py setlocal expandtab
     autocmd BufNewFile,BufRead *.py set tabstop=4
     autocmd BufNewFile,BufRead *.py set shiftwidth=4
+    autocmd BufNewFile,BufRead *.py set softtabstop=4
+
 augroup END
 
 
@@ -165,7 +167,7 @@ set ttymouse=xterm2
 :command Q q
 
 
-"set list
-set listchars=tab:∫-
 
-"
+set listchars=tab:∫-
+set shiftwidth=4
+
