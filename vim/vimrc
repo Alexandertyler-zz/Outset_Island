@@ -1,7 +1,7 @@
 "Vimrc file for Alex Tyler
 
 "In case it's a systemwide vimrc
-set nocompatible
+"set nocompatible
 filetype off
 
 "Launch vundle
@@ -12,11 +12,14 @@ call vundle#begin()
 Plugin 'VundleVim/Vundle.vim'
 
 "Tools
-Plugin 'Valloric/YouCompleteMe'
+"Plugin 'Valloric/YouCompleteMe'
 Plugin 'bkad/CamelCaseMotion'
+Plugin 'tpope/vim-fugitive'
+Plugin 'scrooloose/syntastic'
 
 "Customizations
 Plugin 'bling/vim-airline'
+Plugin 'bling/vim-bufferline'
 Plugin 'mhinz/vim-signify'
 
 "Colorschemes
@@ -99,6 +102,10 @@ colorscheme gruvbox
 "let g:solarized_contrast="high"
 "let g:solarized_termcolors=256
 
+"vim-airline configs
+let g:airline_powerline_fonts = 1
+let g:AirlineTheme="luna"
+
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Files, backups and undo
@@ -157,8 +164,15 @@ set si
 "Wrap lines
 set wrap
 
-set mouse=a
-set ttymouse=xterm2
+""""""""""""""""""""
+"Control Remappings"
+""""""""""""""""""""
+
+"Map mouse controls if not using neovim
+if !has('nvim')
+    set mouse=a
+    set ttymouse=xterm2
+endif
 
 "Aliases
 :command WQ wq
@@ -166,8 +180,27 @@ set ttymouse=xterm2
 :command W w
 :command Q q
 
-
-
 set listchars=tab:∫-
 set shiftwidth=4
 
+"Change the window resizing to +,-
+if bufwinnr(1)
+    map + <C-w>+
+    map - <C-w>-
+    map [ <C-w><
+    map ] <C-w>>
+endif
+
+"add buffer close command
+command Bc bp\|bd \#
+
+"""""""""""""""""""""""""""""
+" Neovim Control Remappings "
+"""""""""""""""""""""""""""""
+if has('nvim')
+    :tnoremap <C-w>h <C-\><C-n><C-w>h
+    :tnoremap <C-w>j <C-\><C-n><C-w>j
+    :tnoremap <C-w>k <C-\><C-n><C-w>k
+    :tnoremap <C-w>l <C-\><C-n><C-w>l
+    :tnoremap <Esc> <C-\><C-n> 
+endif
