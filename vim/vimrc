@@ -26,6 +26,21 @@ Plugin 'mhinz/vim-signify'
 Plugin 'morhetz/gruvbox'
 Plugin 'altercation/vim-colors-solarized'
 
+"Js
+Plugin 'ternjs/tern_for_vim'
+Plugin 'jelera/vim-javascript-syntax'
+
+"Html
+Plugin 'tpope/vim-surround'
+
+Plugin 'kien/rainbow_parentheses.vim'
+augroup RainbowParentheses
+    au VimEnter * RainbowParenthesesToggle
+    au Syntax * RainbowParenthesesLoadRound
+    au Syntax * RainbowParenthesesLoadSquare
+    au Syntax * RainbowParenthesesLoadBraces
+augroup END
+
 call vundle#end()
 filetype plugin indent on
 
@@ -130,7 +145,22 @@ augroup pythonprog
     autocmd BufNewFile,BufRead *.py set tabstop=4
     autocmd BufNewFile,BufRead *.py set shiftwidth=4
     autocmd BufNewFile,BufRead *.py set softtabstop=4
+augroup END
 
+augroup jsprog
+    autocmd!
+    autocmd BufNewFile,BufRead *.js setlocal expandtab
+    autocmd BufNewFile,BufRead *.js setlocal tabstop=2
+    autocmd BufNewFile,BufRead *.js setlocal shiftwidth=2
+    autocmd BufNewFile,BufRead *.js setlocal softtabstop=2
+augroup END
+
+augroup htmlprog
+    autocmd!
+    autocmd BufNewFile,BufRead *.html setlocal expandtab
+    autocmd BufNewFile,BufRead *.html setlocal tabstop=2
+    autocmd BufNewFile,BufRead *.html setlocal shiftwidth=2
+    autocmd BufNewFile,BufRead *.html setlocal softtabstop=2
 augroup END
 
 
@@ -181,6 +211,7 @@ endif
 :command Q q
 
 set listchars=tab:∫-
+set list
 set shiftwidth=4
 
 "Change the window resizing to +,-
@@ -202,5 +233,5 @@ if has('nvim')
     :tnoremap <C-w>j <C-\><C-n><C-w>j
     :tnoremap <C-w>k <C-\><C-n><C-w>k
     :tnoremap <C-w>l <C-\><C-n><C-w>l
-    :tnoremap <Esc> <C-\><C-n> 
+    :tnoremap <C-w><Esc> <C-\><C-n> 
 endif
